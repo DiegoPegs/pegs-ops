@@ -1,0 +1,26 @@
+# Normaliza fim de linha para LF no repositório
+* text=auto eol=lf
+
+# Scripts shell sempre com LF
+*.sh text eol=lf
+
+# Scripts Windows sempre com CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binários
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+
+# Lockfiles: sem diff ruidoso em PRs
+package-lock.json linguist-generated=true -diff
+pnpm-lock.yaml linguist-generated=true -diff
+yarn.lock linguist-generated=true -diff

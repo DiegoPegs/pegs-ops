@@ -1,0 +1,64 @@
+# Dependências
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Build / saída
+dist/
+build/
+out/
+.next/
+.nuxt/
+.turbo/
+.svelte-kit/
+*.tsbuildinfo
+
+# Testes e cobertura
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Cache de ferramentas
+.cache/
+.eslintcache
+.parcel-cache/
+.vite/
+
+# Infraestrutura
+.sst/
+.aws-sam/
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Editores e SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Temporários
+tmp/
+temp/
+*.pid
+*.seed
+*.pid.lock
