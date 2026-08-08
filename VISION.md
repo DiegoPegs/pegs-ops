@@ -30,23 +30,23 @@ O usuário não deve abrir o sistema para procurar informações.
 
 O sistema deve informar ao usuário:
 
-* O que precisa ser feito.
-* O que deve ser produzido.
-* O que precisa ser comprado.
-* O que está atrasado.
-* O que merece atenção naquele momento.
+- O que precisa ser feito.
+- O que deve ser produzido.
+- O que precisa ser comprado.
+- O que está atrasado.
+- O que merece atenção naquele momento.
 
 ---
 
 # Objetivos
 
-* Centralizar todas as informações da operação.
-* Reduzir decisões manuais.
-* Automatizar fluxos repetitivos.
-* Organizar produtos, receitas e arquivos.
-* Facilitar planejamento de eventos.
-* Melhorar o controle de estoque.
-* Evoluir continuamente com novas funcionalidades sem comprometer a simplicidade.
+- Centralizar todas as informações da operação.
+- Reduzir decisões manuais.
+- Automatizar fluxos repetitivos.
+- Organizar produtos, receitas e arquivos.
+- Facilitar planejamento de eventos.
+- Melhorar o controle de estoque.
+- Evoluir continuamente com novas funcionalidades sem comprometer a simplicidade.
 
 ---
 
@@ -78,12 +78,12 @@ O Pegs Ops pode integrar-se a essas ferramentas, mas seu foco é a gestão opera
 
 # Pilares do Produto
 
-* Produtos
-* Projetos
-* Produção
-* Estoque
-* Eventos
-* Operação
+- Produtos
+- Projetos
+- Produção
+- Estoque
+- Eventos
+- Operação
 
 Todos os demais módulos existem para apoiar esses pilares.
 
