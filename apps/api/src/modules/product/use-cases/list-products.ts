@@ -1,8 +1,8 @@
-import type { ListProductsFilter, Product, ProductRepository } from '@pegs-ops/domain';
+import type { ListProductsFilter, ProductRepository, ProductWithOrigin } from '@pegs-ops/domain';
 
 export async function listProducts(
   repository: ProductRepository,
   filter: ListProductsFilter = {},
-): Promise<Product[]> {
+): Promise<ProductWithOrigin[]> {
   return repository.list(filter);
 }

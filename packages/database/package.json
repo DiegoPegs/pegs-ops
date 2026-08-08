@@ -12,6 +12,7 @@
     "generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
+    "seed": "prisma db seed",
     "studio": "prisma studio",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "postinstall": "prisma generate"
@@ -22,6 +23,7 @@
   "devDependencies": {
     "dotenv": "^17.2.3",
     "prisma": "^6.17.1",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }

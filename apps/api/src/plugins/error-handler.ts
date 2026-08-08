@@ -2,6 +2,11 @@ import { ProductAlreadyArchivedError, ProductNotFoundError } from '@pegs-ops/dom
 import type { FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 
+/** P2003 é o código do Prisma para violação de chave estrangeira. */
+function isForeignKeyViolation(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2003';
+}
+
 /**
  * Traduz erros de validação e de domínio em respostas HTTP.
  * Qualquer outro erro cai no handler padrão do Fastify (500).
@@ -25,6 +30,15 @@ export function registerErrorHandler(app: FastifyInstance): void {
 
     if (error instanceof ProductAlreadyArchivedError) {
       return reply.code(409).send({ error: error.code, message: error.message });
+    }
+
+    // Violação de chave estrangeira: o único vínculo hoje é Product -> Origin.
+    if (isForeignKeyViolation(error)) {
+      return reply.code(400).send({
+        error: 'INVALID_REFERENCE',
+        message: 'A origem informada não existe.',
+        issues: [{ path: 'originId', message: 'A origem informada não existe.' }],
+      });
     }
 
     request.log.error(error);

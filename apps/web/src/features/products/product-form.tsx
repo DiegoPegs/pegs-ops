@@ -8,12 +8,23 @@ import {
   type ProductFormValues,
 } from '@pegs-ops/shared';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
+import { useOrigins } from '@/features/products/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+
+/** Valor sentinela do select: o Radix não aceita SelectItem com value vazio. */
+const NO_ORIGIN = 'none';
 
 interface ProductFormProps {
   product?: ProductDto;
@@ -30,8 +41,10 @@ export function ProductForm({
   errorMessage,
   onSubmit,
 }: ProductFormProps) {
+  const { data: origins } = useOrigins();
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<ProductFormValues, unknown, CreateProductInput>({
@@ -39,8 +52,8 @@ export function ProductForm({
     defaultValues: {
       name: product?.name ?? '',
       description: product?.description ?? '',
-      sourceType: product?.sourceType ?? '',
-      sourceUrl: product?.sourceUrl ?? '',
+      originId: product?.originId ?? '',
+      originUrl: product?.originUrl ?? '',
       notes: product?.notes ?? '',
     },
   });
@@ -65,22 +78,37 @@ export function ProductForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="sourceType">Tipo da origem</Label>
-          <Input
-            id="sourceType"
-            placeholder="Modelagem própria, marketplace…"
-            {...register('sourceType')}
+          <Label htmlFor="originId">Origem</Label>
+          <Controller
+            control={control}
+            name="originId"
+            render={({ field }) => (
+              <Select
+                value={field.value ? field.value : NO_ORIGIN}
+                onValueChange={(value) => field.onChange(value === NO_ORIGIN ? '' : value)}
+              >
+                <SelectTrigger id="originId" className="w-full">
+                  <SelectValue placeholder="Selecione a origem" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_ORIGIN}>Sem origem</SelectItem>
+                  {origins?.map((origin) => (
+                    <SelectItem key={origin.id} value={origin.id}>
+                      {origin.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           />
-          {errors.sourceType && (
-            <p className="text-destructive text-sm">{errors.sourceType.message}</p>
-          )}
+          {errors.originId && <p className="text-destructive text-sm">{errors.originId.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="sourceUrl">URL da origem</Label>
-          <Input id="sourceUrl" placeholder="https://…" {...register('sourceUrl')} />
-          {errors.sourceUrl && (
-            <p className="text-destructive text-sm">{errors.sourceUrl.message}</p>
+          <Label htmlFor="originUrl">URL da origem</Label>
+          <Input id="originUrl" placeholder="https://…" {...register('originUrl')} />
+          {errors.originUrl && (
+            <p className="text-destructive text-sm">{errors.originUrl.message}</p>
           )}
         </div>
       </div>

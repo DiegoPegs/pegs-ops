@@ -1,6 +1,6 @@
 import {
   ProductNotFoundError,
-  type Product,
+  type ProductWithOrigin,
   type ProductRepository,
   type UpdateProductData,
 } from '@pegs-ops/domain';
@@ -9,7 +9,7 @@ export async function updateProduct(
   repository: ProductRepository,
   id: string,
   input: UpdateProductData,
-): Promise<Product> {
+): Promise<ProductWithOrigin> {
   const product = await repository.update(id, input);
 
   if (!product) {

@@ -7,20 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Origem do modelo de um produto (MakerWorld, Printables, Cliente, Próprio…).
+model Origin {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @unique @db.VarChar(60)
+
+  products Product[]
+
+  @@map("origins")
+}
+
 /// Produto que o negócio fabrica ou revende.
 /// Sem variantes, receitas, estoque, categorias ou tags nesta etapa.
 model Product {
   id          String    @id @default(uuid()) @db.Uuid
   name        String    @db.VarChar(120)
   description String?
-  sourceType  String?   @map("source_type") @db.VarChar(60)
-  sourceUrl   String?   @map("source_url") @db.VarChar(2048)
+  originId    String?   @map("origin_id") @db.Uuid
+  originUrl   String?   @map("origin_url") @db.VarChar(2048)
   notes       String?
   archivedAt  DateTime? @map("archived_at")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
+  origin Origin? @relation(fields: [originId], references: [id], onDelete: SetNull)
+
   @@index([archivedAt])
   @@index([name])
+  @@index([originId])
   @@map("products")
 }

@@ -47,8 +47,8 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
           </CardHeader>
           <CardContent className="space-y-4">
             <Field label="Descrição" value={product.description} />
-            <Field label="Tipo da origem" value={product.sourceType} />
-            <Field label="URL da origem" value={product.sourceUrl} />
+            <Field label="Origem" value={product.origin?.name ?? null} />
+            <Field label="URL da origem" value={product.originUrl} />
             <Field label="Observações" value={product.notes} />
             <Field label="Criado em" value={new Date(product.createdAt).toLocaleString('pt-BR')} />
             {product.archivedAt && (

@@ -2,12 +2,15 @@ import {
   isArchived,
   ProductAlreadyArchivedError,
   ProductNotFoundError,
-  type Product,
+  type ProductWithOrigin,
   type ProductRepository,
 } from '@pegs-ops/domain';
 
 /** Arquivamento é lógico: o produto sai da operação, mas permanece no histórico. */
-export async function archiveProduct(repository: ProductRepository, id: string): Promise<Product> {
+export async function archiveProduct(
+  repository: ProductRepository,
+  id: string,
+): Promise<ProductWithOrigin> {
   const product = await repository.findById(id);
 
   if (!product) {

@@ -1,4 +1,9 @@
-import type { CreateProductInput, ProductDto, UpdateProductInput } from '@pegs-ops/shared';
+import type {
+  CreateProductInput,
+  OriginDto,
+  ProductDto,
+  UpdateProductInput,
+} from '@pegs-ops/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { apiFetch } from '@/lib/api';
@@ -8,6 +13,14 @@ export const productKeys = {
   list: (includeArchived: boolean) => ['products', { includeArchived }] as const,
   detail: (id: string) => ['products', id] as const,
 };
+
+export function useOrigins() {
+  return useQuery({
+    queryKey: ['origins'] as const,
+    queryFn: () => apiFetch<OriginDto[]>('/origins'),
+    staleTime: 5 * 60_000,
+  });
+}
 
 export function useProducts(includeArchived: boolean) {
   return useQuery({

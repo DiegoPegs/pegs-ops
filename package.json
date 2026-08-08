@@ -26,6 +26,7 @@
     "db:logs": "docker compose logs -f postgres",
     "db:migrate": "pnpm --filter @pegs-ops/database migrate:dev",
     "db:generate": "pnpm --filter @pegs-ops/database generate",
+    "db:seed": "pnpm --filter @pegs-ops/database seed",
     "db:studio": "pnpm --filter @pegs-ops/database studio"
   },
   "devDependencies": {

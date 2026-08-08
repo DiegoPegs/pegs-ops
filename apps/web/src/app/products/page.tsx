@@ -49,7 +49,7 @@ export default function ProductsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
-              <TableHead>Tipo da origem</TableHead>
+              <TableHead>Origem</TableHead>
               <TableHead>Situação</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
@@ -62,7 +62,9 @@ export default function ProductsPage() {
                     {product.name}
                   </Link>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{product.sourceType ?? '—'}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {product.origin?.name ?? '—'}
+                </TableCell>
                 <TableCell>
                   <Badge variant={product.archivedAt ? 'secondary' : 'default'}>
                     {product.archivedAt ? 'Arquivado' : 'Ativo'}

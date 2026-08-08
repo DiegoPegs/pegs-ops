@@ -1,3 +1,5 @@
+import type { Origin } from '../origin/origin.entity.js';
+
 /**
  * Produto: item que o negócio fabrica ou revende.
  *
@@ -8,20 +10,25 @@ export interface Product {
   id: string;
   name: string;
   description: string | null;
-  sourceType: string | null;
-  sourceUrl: string | null;
+  originId: string | null;
+  originUrl: string | null;
   notes: string | null;
   archivedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
+/** Produto com a origem resolvida, como trafega nas leituras. */
+export interface ProductWithOrigin extends Product {
+  origin: Origin | null;
+}
+
 /** Campos aceitos na criação de um produto. */
 export interface CreateProductData {
   name: string;
   description?: string | null;
-  sourceType?: string | null;
-  sourceUrl?: string | null;
+  originId?: string | null;
+  originUrl?: string | null;
   notes?: string | null;
 }
 
