@@ -1,0 +1,3 @@
+-- Migration inicial do Pegs Ops.
+-- Intencionalmente vazia: o bootstrap não define nenhum modelo de domínio.
+-- Serve como baseline do histórico de migrations.

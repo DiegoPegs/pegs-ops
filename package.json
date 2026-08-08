@@ -1,0 +1,41 @@
+{
+  "name": "pegs-ops",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Plataforma de gestão operacional para manufatura digital",
+  "license": "MIT",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "dev:api": "pnpm --filter @pegs-ops/api dev",
+    "dev:web": "pnpm --filter @pegs-ops/web dev",
+    "build": "pnpm -r build",
+    "start": "pnpm --parallel --filter \"./apps/*\" start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f postgres",
+    "db:migrate": "pnpm --filter @pegs-ops/database migrate:dev",
+    "db:generate": "pnpm --filter @pegs-ops/database generate",
+    "db:studio": "pnpm --filter @pegs-ops/database studio"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^22.15.3",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,11 @@
+// Schema inicial do Pegs Ops.
+// Nenhum modelo de domínio foi criado neste momento (bootstrap apenas).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
