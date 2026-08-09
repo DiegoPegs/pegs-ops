@@ -238,3 +238,29 @@ sinalizada na tela da Variante; no futuro, no painel de pendências.
 falta de estoque registrado esconderia um fato que aconteceu, e empurraria o
 operador a inventar um ajuste antes de conseguir registrar a venda. O saldo
 negativo diz algo útil: existe produção ou inventário que ainda não foi lançado.
+
+---
+
+## D-014 · O planejamento do evento é sempre calculado
+
+**Data:** 2026-08-09 · **Status:** Implementada
+
+O `EventItem` guarda apenas a Meta. Estoque atual, quantidade a produzir, tempo,
+filamento e custo são calculados a cada leitura e nunca persistidos.
+
+`Produzir = max(Meta - EstoqueAtual, 0)`, e as estimativas valem para o que ainda
+falta produzir, não para a meta inteira.
+
+O Evento não escolhe receita: ele pergunta ao módulo de Receitas qual é a
+**configuração de fabricação vigente** da Variante — a versão padrão da receita
+ativa mais antiga. Resolver isso é responsabilidade do módulo de Receitas e
+permanece transparente para Eventos.
+
+Variante sem configuração vigente entra no planejamento com Meta e Produzir, mas
+tempo, filamento e custo ficam desconhecidos e **não somam zero nos totais** — o
+resumo informa quantos itens estão nessa situação.
+
+**Por quê:** estoque e receita mudam o tempo todo. Um número congelado no momento
+do cadastro estaria errado no dia seguinte, e o operador tomaria decisão de
+produção com base em dado velho. Tratar valor desconhecido como zero seria pior
+que não mostrar: um custo total subestimado passa por completo.
