@@ -7,6 +7,32 @@ entrada em vez de reescrever a anterior.
 Status possíveis: **Aceita** (vale a partir de agora) · **Implementada** (já
 refletida no código) · **Revista** (substituída por uma decisão posterior).
 
+## Índice por tema
+
+As entradas seguem em ordem cronológica; este índice agrupa por assunto.
+
+**Catálogo** — o que o negócio vende e como é cadastrado
+
+- [D-001 · Produto não possui estoque](#d-001--produto-não-possui-estoque)
+- [D-002 · Arquivamento é lógico, nunca exclusão física](#d-002--arquivamento-é-lógico-nunca-exclusão-física)
+- [D-003 · Origin é entidade, não texto livre](#d-003--origin-é-entidade-não-texto-livre)
+- [D-005 · Cadastro incremental](#d-005--cadastro-incremental)
+
+**Fabricação** — o que é produzido e como
+
+- [D-004 · Receita pertence à Variante](#d-004--receita-pertence-à-variante)
+- [D-006 · Os atributos das Variantes são livres](#d-006--os-atributos-das-variantes-são-livres)
+- [D-007 · O Pegs Ops referencia arquivos, não os gerencia (no MVP)](#d-007--o-pegs-ops-referencia-arquivos-não-os-gerencia-no-mvp)
+- [D-008 · O custo da Receita é manual no MVP](#d-008--o-custo-da-receita-é-manual-no-mvp)
+- [D-009 · A Variante é uma entidade navegável](#d-009--a-variante-é-uma-entidade-navegável)
+- [D-010 · O número da versão da Receita é sequencial e imutável](#d-010--o-número-da-versão-da-receita-é-sequencial-e-imutável)
+
+**Inventário** — como o saldo se forma
+
+- [D-011 · O estoque é derivado das movimentações](#d-011--o-estoque-é-derivado-das-movimentações)
+- [D-012 · O efeito da movimentação pertence ao tipo de movimentação](#d-012--o-efeito-da-movimentação-pertence-ao-tipo-de-movimentação)
+- [D-013 · O estoque pode ficar negativo](#d-013--o-estoque-pode-ficar-negativo)
+
 ---
 
 ## D-001 · Produto não possui estoque
