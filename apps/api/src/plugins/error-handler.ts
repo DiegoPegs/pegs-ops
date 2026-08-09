@@ -1,11 +1,40 @@
 import {
   ProductAlreadyArchivedError,
   ProductNotFoundError,
+  RecipeAlreadyArchivedError,
+  RecipeNotFoundError,
+  RecipeVersionAlreadyArchivedError,
+  RecipeVersionNotFoundError,
   VariantAlreadyArchivedError,
   VariantNotFoundError,
 } from '@pegs-ops/domain';
 import type { FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
+
+/** Erros de domínio "não encontrado": cada módulo registra o seu aqui. */
+const NOT_FOUND_ERRORS = [
+  ProductNotFoundError,
+  VariantNotFoundError,
+  RecipeNotFoundError,
+  RecipeVersionNotFoundError,
+] as const;
+
+/** Erros de domínio "já arquivado". */
+const ALREADY_ARCHIVED_ERRORS = [
+  ProductAlreadyArchivedError,
+  VariantAlreadyArchivedError,
+  RecipeAlreadyArchivedError,
+  RecipeVersionAlreadyArchivedError,
+] as const;
+
+interface DomainError {
+  code: string;
+  message: string;
+}
+
+function matches(error: unknown, types: readonly (abstract new (...args: never) => object)[]) {
+  return types.some((type) => error instanceof type);
+}
 
 /** P2003 é o código do Prisma para violação de chave estrangeira. */
 function isForeignKeyViolation(error: unknown): boolean {
@@ -29,15 +58,16 @@ export function registerErrorHandler(app: FastifyInstance): void {
       });
     }
 
-    if (error instanceof ProductNotFoundError || error instanceof VariantNotFoundError) {
-      return reply.code(404).send({ error: error.code, message: error.message });
+    if (matches(error, NOT_FOUND_ERRORS)) {
+      const domainError = error as unknown as DomainError;
+
+      return reply.code(404).send({ error: domainError.code, message: domainError.message });
     }
 
-    if (
-      error instanceof ProductAlreadyArchivedError ||
-      error instanceof VariantAlreadyArchivedError
-    ) {
-      return reply.code(409).send({ error: error.code, message: error.message });
+    if (matches(error, ALREADY_ARCHIVED_ERRORS)) {
+      const domainError = error as unknown as DomainError;
+
+      return reply.code(409).send({ error: domainError.code, message: domainError.message });
     }
 
     // Violação de chave estrangeira: o único vínculo hoje é Product -> Origin.

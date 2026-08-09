@@ -1,6 +1,7 @@
 'use client';
 
 import type { VariantDto } from '@pegs-ops/shared';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -98,6 +99,9 @@ export function VariantsTab({ productId }: { productId: string }) {
               <div className="flex items-start justify-between gap-4">
                 <VariantSummary variant={variant} />
                 <div className="flex shrink-0 gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/variants/${variant.id}`}>Abrir</Link>
+                  </Button>
                   <Button variant="ghost" size="sm" onClick={() => setEditingId(variant.id)}>
                     Editar
                   </Button>
