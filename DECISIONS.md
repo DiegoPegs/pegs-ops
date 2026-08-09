@@ -73,3 +73,19 @@ origem, URL, observações — pode ser preenchido depois, aos poucos.
 **Por quê:** o operador cadastra no meio da rotina, muitas vezes sem ter todos os
 dados em mãos. Um formulário exigente empurra o registro para depois, e o que
 fica para depois não é registrado.
+
+---
+
+## D-006 · Os atributos das Variantes são livres
+
+**Data:** 2026-08-08 · **Status:** Implementada
+
+Cada Variante armazena seus atributos como pares abertos de `name` e `value`
+(Modelo = Gato, Cor = Branco). Não existem campos fixos como `color`, `model` ou
+`material`, nem as tabelas `AttributeDefinition` e `AttributeOption`.
+
+**Por quê:** o sistema ainda não tem um módulo de Administração para gerenciar
+atributos, e fixar colunas agora congelaria um vocabulário que ainda não
+conhecemos. Com pares livres, o operador cadastra o que a variante realmente
+tem, e a estrutura pode evoluir para atributos normalizados sem alterar o
+domínio do Produto.
