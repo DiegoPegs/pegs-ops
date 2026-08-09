@@ -155,3 +155,60 @@ como padrão.
 reaproveitado faria duas configurações diferentes responderem pelo mesmo nome,
 quebrando qualquer referência futura — de uma ordem de produção a um registro de
 custo.
+
+---
+
+## D-011 · O estoque é derivado das movimentações
+
+**Data:** 2026-08-09 · **Status:** Implementada
+
+O Pegs Ops não permite edição direta do estoque. O saldo é sempre calculado a
+partir das movimentações registradas — produção, vendas, ajustes, perdas e as
+futuras movimentações. Nenhuma tabela guarda saldo.
+
+O tipo da movimentação é uma tabela, não um enum, para que novos tipos possam ser
+cadastrados sem deploy.
+
+**Por quê:** o saldo derivado garante rastreabilidade completa e elimina a classe
+de bugs em que o total e o histórico divergem: não há dois lugares para
+discordarem. Cada alteração de estoque fica registrada com tipo, quantidade e
+momento, o que é a base para Produção, Eventos, Planejamento e Vendas.
+
+Desdobramentos desta decisão: [[D-012]] define de onde vem o sinal da
+movimentação e [[D-013]] trata do saldo negativo.
+
+---
+
+## D-012 · O efeito da movimentação pertence ao tipo de movimentação
+
+**Data:** 2026-08-09 · **Status:** Implementada
+
+O sinal da movimentação — entrada, saída ou ambos — não é definido pelo cliente
+nem pelo código da aplicação. Ele é configurado no `StockMovementType`, na coluna
+`direction` (`IN`, `OUT`, `BOTH`).
+
+O cliente sempre informa quantidades positivas; apenas tipos `BOTH` (Ajuste)
+aceitam valores negativos. O domínio aplica o sinal a partir da direção do tipo.
+
+**Por quê:** com o efeito no banco, novos tipos de movimentação entram sem
+alterar o código da aplicação — que é justamente o motivo de o tipo ser tabela e
+não enum. E tirar o sinal das mãos de quem chama a API transforma "Produção
+sempre soma" e "Perda sempre subtrai" em garantias do sistema, não em convenções
+que cada integração precisa lembrar de respeitar.
+
+---
+
+## D-013 · O estoque pode ficar negativo
+
+**Data:** 2026-08-09 · **Status:** Implementada
+
+Nenhuma movimentação é recusada por falta de saldo. Uma saída maior que o
+estoque registrado é aceita e o saldo fica negativo.
+
+Saldo negativo é uma inconsistência operacional a ser corrigida depois — hoje
+sinalizada na tela da Variante; no futuro, no painel de pendências.
+
+**Por quê:** o sistema deve refletir a operação real. Bloquear uma venda por
+falta de estoque registrado esconderia um fato que aconteceu, e empurraria o
+operador a inventar um ajuste antes de conseguir registrar a venda. O saldo
+negativo diz algo útil: existe produção ou inventário que ainda não foi lançado.
