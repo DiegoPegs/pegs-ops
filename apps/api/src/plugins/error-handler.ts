@@ -1,6 +1,8 @@
 import {
+  InvalidMovementQuantityError,
   ProductAlreadyArchivedError,
   ProductNotFoundError,
+  StockMovementTypeNotFoundError,
   RecipeAlreadyArchivedError,
   RecipeNotFoundError,
   RecipeVersionAlreadyArchivedError,
@@ -17,7 +19,11 @@ const NOT_FOUND_ERRORS = [
   VariantNotFoundError,
   RecipeNotFoundError,
   RecipeVersionNotFoundError,
+  StockMovementTypeNotFoundError,
 ] as const;
+
+/** Erros de domínio que representam entrada inválida do usuário. */
+const BAD_REQUEST_ERRORS = [InvalidMovementQuantityError] as const;
 
 /** Erros de domínio "já arquivado". */
 const ALREADY_ARCHIVED_ERRORS = [
@@ -56,6 +62,12 @@ export function registerErrorHandler(app: FastifyInstance): void {
           message: issue.message,
         })),
       });
+    }
+
+    if (matches(error, BAD_REQUEST_ERRORS)) {
+      const domainError = error as unknown as DomainError;
+
+      return reply.code(400).send({ error: domainError.code, message: domainError.message });
     }
 
     if (matches(error, NOT_FOUND_ERRORS)) {
