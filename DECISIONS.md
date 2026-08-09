@@ -89,3 +89,18 @@ atributos, e fixar colunas agora congelaria um vocabulário que ainda não
 conhecemos. Com pares livres, o operador cadastra o que a variante realmente
 tem, e a estrutura pode evoluir para atributos normalizados sem alterar o
 domínio do Produto.
+
+---
+
+## D-007 · O Pegs Ops referencia arquivos, não os gerencia (no MVP)
+
+**Data:** 2026-08-08 · **Status:** Aceita
+
+Durante o MVP, arquivos STL, 3MF e GCode são referenciados por URL quando
+necessário. O sistema não faz upload, armazenamento, versionamento nem preview
+desses arquivos. O gerenciamento de arquivos será um módulo futuro.
+
+**Por quê:** o objetivo do sistema é controlar a operação, não ser um repositório
+de arquivos. Referenciar por URL entrega o valor operacional — saber onde está o
+modelo — sem exigir storage, cotas e versionamento logo de início, e sem
+bloquear a evolução do restante do sistema.
