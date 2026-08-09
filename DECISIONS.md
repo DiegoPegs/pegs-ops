@@ -33,6 +33,14 @@ As entradas seguem em ordem cronológica; este índice agrupa por assunto.
 - [D-012 · O efeito da movimentação pertence ao tipo de movimentação](#d-012--o-efeito-da-movimentação-pertence-ao-tipo-de-movimentação)
 - [D-013 · O estoque pode ficar negativo](#d-013--o-estoque-pode-ficar-negativo)
 
+**Eventos** — o que se planeja levar
+
+- [D-014 · O planejamento do evento é sempre calculado](#d-014--o-planejamento-do-evento-é-sempre-calculado)
+
+**Princípios gerais** — valem para todo o domínio
+
+- [D-015 · Estados só existem quando alteram o comportamento do sistema](#d-015--estados-só-existem-quando-alteram-o-comportamento-do-sistema)
+
 ---
 
 ## D-001 · Produto não possui estoque
@@ -264,3 +272,20 @@ resumo informa quantos itens estão nessa situação.
 do cadastro estaria errado no dia seguinte, e o operador tomaria decisão de
 produção com base em dado velho. Tratar valor desconhecido como zero seria pior
 que não mostrar: um custo total subestimado passa por completo.
+
+---
+
+## D-015 · Estados só existem quando alteram o comportamento do sistema
+
+**Data:** 2026-08-09 · **Status:** Aceita
+
+Um novo estado — de evento, produto, variante ou do que vier — só entra no
+modelo quando representa uma regra de negócio diferente. Estados que não alteram
+permissões, cálculos, interface ou fluxo operacional devem ser evitados.
+
+O primeiro caso foi o `EventStatus`: `CONFIRMED` foi descartado por não mudar
+nada no sistema, restando `PLANNED`, `DONE` e `CANCELLED`.
+
+**Por quê:** cada estado se multiplica pelo resto do domínio — vira condição em
+consulta, ramo em regra, opção em tela e caso em teste. Um estado que só informa
+não paga esse custo, e o lugar dele é uma observação, não uma máquina de estados.
