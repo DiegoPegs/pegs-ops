@@ -52,6 +52,7 @@ model Variant {
   product    Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
   attributes VariantAttribute[]
   recipes    Recipe[]
+  movements  StockMovement[]
 
   @@index([productId])
   @@index([archivedAt])
@@ -115,4 +116,43 @@ model VariantAttribute {
 
   @@index([variantId])
   @@map("variant_attributes")
+}
+
+/// Efeito de um tipo de movimentação sobre o saldo.
+enum StockMovementDirection {
+  IN
+  OUT
+  BOTH
+}
+
+/// Tipo de movimentação de estoque. É tabela, não enum: novos tipos podem ser
+/// cadastrados sem deploy, e a direção diz ao domínio como aplicar o sinal.
+model StockMovementType {
+  id        String                 @id @default(uuid()) @db.Uuid
+  code      String                 @unique @db.VarChar(40)
+  name      String                 @db.VarChar(80)
+  direction StockMovementDirection
+
+  movements StockMovement[]
+
+  @@map("stock_movement_types")
+}
+
+/// Movimentação de estoque de uma Variante.
+/// O saldo nunca é armazenado: é a soma das movimentações (D-011).
+model StockMovement {
+  id             String   @id @default(uuid()) @db.Uuid
+  variantId      String   @map("variant_id") @db.Uuid
+  movementTypeId String   @map("movement_type_id") @db.Uuid
+  quantity       Int
+  unitPrice      Decimal? @map("unit_price") @db.Decimal(10, 2)
+  notes          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  variant      Variant           @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  movementType StockMovementType @relation(fields: [movementTypeId], references: [id])
+
+  @@index([variantId, createdAt])
+  @@index([movementTypeId])
+  @@map("stock_movements")
 }

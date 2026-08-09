@@ -6,6 +6,7 @@ import { use } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { InventoryTab } from '@/features/inventory/inventory-tab';
 import { RecipesTab } from '@/features/recipes/recipes-tab';
 import { useVariant } from '@/features/variants/variant-api';
 
@@ -49,6 +50,7 @@ export default function VariantPage({ params }: { params: Promise<{ id: string }
             <TabsList>
               <TabsTrigger value="details">Detalhes</TabsTrigger>
               <TabsTrigger value="recipes">Receitas</TabsTrigger>
+              <TabsTrigger value="inventory">Inventário</TabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="pt-4">
@@ -72,6 +74,10 @@ export default function VariantPage({ params }: { params: Promise<{ id: string }
 
             <TabsContent value="recipes" className="pt-4">
               <RecipesTab variantId={variant.id} />
+            </TabsContent>
+
+            <TabsContent value="inventory" className="pt-4">
+              <InventoryTab variantId={variant.id} />
             </TabsContent>
           </Tabs>
         </>
