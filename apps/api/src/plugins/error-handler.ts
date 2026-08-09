@@ -1,4 +1,9 @@
-import { ProductAlreadyArchivedError, ProductNotFoundError } from '@pegs-ops/domain';
+import {
+  ProductAlreadyArchivedError,
+  ProductNotFoundError,
+  VariantAlreadyArchivedError,
+  VariantNotFoundError,
+} from '@pegs-ops/domain';
 import type { FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 
@@ -24,11 +29,14 @@ export function registerErrorHandler(app: FastifyInstance): void {
       });
     }
 
-    if (error instanceof ProductNotFoundError) {
+    if (error instanceof ProductNotFoundError || error instanceof VariantNotFoundError) {
       return reply.code(404).send({ error: error.code, message: error.message });
     }
 
-    if (error instanceof ProductAlreadyArchivedError) {
+    if (
+      error instanceof ProductAlreadyArchivedError ||
+      error instanceof VariantAlreadyArchivedError
+    ) {
       return reply.code(409).send({ error: error.code, message: error.message });
     }
 

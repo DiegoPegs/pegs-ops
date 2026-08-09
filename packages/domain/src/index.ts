@@ -3,3 +3,6 @@ export * from './origin/origin.repository.js';
 export * from './product/product.entity.js';
 export * from './product/product.errors.js';
 export * from './product/product.repository.js';
+export * from './variant/variant.entity.js';
+export * from './variant/variant.errors.js';
+export * from './variant/variant.repository.js';
