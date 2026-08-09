@@ -104,3 +104,54 @@ desses arquivos. O gerenciamento de arquivos será um módulo futuro.
 de arquivos. Referenciar por URL entrega o valor operacional — saber onde está o
 modelo — sem exigir storage, cotas e versionamento logo de início, e sem
 bloquear a evolução do restante do sistema.
+
+---
+
+## D-008 · O custo da Receita é manual no MVP
+
+**Data:** 2026-08-09 · **Status:** Aceita
+
+A Receita armazena um custo informado pelo usuário. O cálculo automático a partir
+de tempo de impressão, impressora e consumo de filamento fica para uma fase
+futura, quando passará a conviver com o custo informado em vez de substituí-lo.
+
+**Por quê:** o custo informado já resolve a decisão do dia a dia — quanto cobrar
+— e depende apenas do que o operador já sabe. O cálculo automático exige
+modelar impressoras, materiais e tempos, e prendê-lo como pré-requisito
+atrasaria a Receita inteira. Guardar os dois lado a lado depois permite comparar
+o informado com o calculado e calibrar a operação.
+
+---
+
+## D-009 · A Variante é uma entidade navegável
+
+**Data:** 2026-08-09 · **Status:** Implementada
+
+A Variante continua sendo criada e listada dentro do Produto, mas cada card tem
+uma ação **Abrir** que leva a `/variants/:id`. Essa página é o lugar das
+funcionalidades de fabricação — hoje Receitas; adiante Estoque, Custos, Produção
+e Histórico.
+
+**Por quê:** a Variante é o centro da operação de fabricação, e empilhar tudo na
+tela do Produto a sobrecarregaria a cada novo módulo. Dar tela própria à Variante
+mantém o Produto como visão comercial e cria um lugar previsível para o que vem.
+
+---
+
+## D-010 · O número da versão da Receita é sequencial e imutável
+
+**Data:** 2026-08-09 · **Status:** Implementada
+
+O campo `version` é atribuído pelo sistema, sequencial por Receita (1, 2, 3…). O
+usuário não informa esse valor. Versões não são renumeradas nem têm seus números
+reaproveitados: arquivar a v2 não libera o número 2, e a próxima versão será a
+v3.
+
+Apenas uma versão por Receita é a padrão. Ao marcar uma nova como padrão, a
+anterior deixa de ser, na mesma transação. A primeira versão de uma Receita nasce
+como padrão.
+
+**Por quê:** as versões são um histórico de evolução da fabricação. Um número
+reaproveitado faria duas configurações diferentes responderem pelo mesmo nome,
+quebrando qualquer referência futura — de uma ordem de produção a um registro de
+custo.
