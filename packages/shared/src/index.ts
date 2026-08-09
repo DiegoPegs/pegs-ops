@@ -1,3 +1,4 @@
+export * from './event/event.schemas.js';
 export * from './inventory/inventory.schemas.js';
 export * from './product/product.schemas.js';
 export * from './recipe/recipe.schemas.js';

@@ -33,6 +33,14 @@ As entradas seguem em ordem cronológica; este índice agrupa por assunto.
 - [D-012 · O efeito da movimentação pertence ao tipo de movimentação](#d-012--o-efeito-da-movimentação-pertence-ao-tipo-de-movimentação)
 - [D-013 · O estoque pode ficar negativo](#d-013--o-estoque-pode-ficar-negativo)
 
+**Eventos** — o que se planeja levar
+
+- [D-014 · O planejamento do evento é sempre calculado](#d-014--o-planejamento-do-evento-é-sempre-calculado)
+
+**Princípios gerais** — valem para todo o domínio
+
+- [D-015 · Estados só existem quando alteram o comportamento do sistema](#d-015--estados-só-existem-quando-alteram-o-comportamento-do-sistema)
+
 ---
 
 ## D-001 · Produto não possui estoque
@@ -238,3 +246,46 @@ sinalizada na tela da Variante; no futuro, no painel de pendências.
 falta de estoque registrado esconderia um fato que aconteceu, e empurraria o
 operador a inventar um ajuste antes de conseguir registrar a venda. O saldo
 negativo diz algo útil: existe produção ou inventário que ainda não foi lançado.
+
+---
+
+## D-014 · O planejamento do evento é sempre calculado
+
+**Data:** 2026-08-09 · **Status:** Implementada
+
+O `EventItem` guarda apenas a Meta. Estoque atual, quantidade a produzir, tempo,
+filamento e custo são calculados a cada leitura e nunca persistidos.
+
+`Produzir = max(Meta - EstoqueAtual, 0)`, e as estimativas valem para o que ainda
+falta produzir, não para a meta inteira.
+
+O Evento não escolhe receita: ele pergunta ao módulo de Receitas qual é a
+**configuração de fabricação vigente** da Variante — a versão padrão da receita
+ativa mais antiga. Resolver isso é responsabilidade do módulo de Receitas e
+permanece transparente para Eventos.
+
+Variante sem configuração vigente entra no planejamento com Meta e Produzir, mas
+tempo, filamento e custo ficam desconhecidos e **não somam zero nos totais** — o
+resumo informa quantos itens estão nessa situação.
+
+**Por quê:** estoque e receita mudam o tempo todo. Um número congelado no momento
+do cadastro estaria errado no dia seguinte, e o operador tomaria decisão de
+produção com base em dado velho. Tratar valor desconhecido como zero seria pior
+que não mostrar: um custo total subestimado passa por completo.
+
+---
+
+## D-015 · Estados só existem quando alteram o comportamento do sistema
+
+**Data:** 2026-08-09 · **Status:** Aceita
+
+Um novo estado — de evento, produto, variante ou do que vier — só entra no
+modelo quando representa uma regra de negócio diferente. Estados que não alteram
+permissões, cálculos, interface ou fluxo operacional devem ser evitados.
+
+O primeiro caso foi o `EventStatus`: `CONFIRMED` foi descartado por não mudar
+nada no sistema, restando `PLANNED`, `DONE` e `CANCELLED`.
+
+**Por quê:** cada estado se multiplica pelo resto do domínio — vira condição em
+consulta, ramo em regra, opção em tela e caso em teste. Um estado que só informa
+não paga esse custo, e o lugar dele é uma observação, não uma máquina de estados.

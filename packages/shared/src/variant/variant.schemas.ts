@@ -45,6 +45,10 @@ export const productIdPathParamsSchema = z.object({
   productId: z.uuid('Identificador de produto inválido.'),
 });
 
+export const searchVariantsQuerySchema = z.object({
+  search: z.string().trim().max(120).optional().default(''),
+});
+
 export const variantAttributeSchema = z.object({
   id: z.string(),
   variantId: z.string(),
@@ -63,6 +67,11 @@ export const variantSchema = z.object({
   updatedAt: z.string(),
 });
 
+export const variantWithProductSchema = variantSchema.extend({
+  product: z.object({ id: z.string(), name: z.string() }),
+});
+
+export type VariantWithProductDto = z.infer<typeof variantWithProductSchema>;
 export type VariantFormValues = z.input<typeof createVariantSchema>;
 export type CreateVariantInput = z.output<typeof createVariantSchema>;
 export type UpdateVariantInput = z.output<typeof updateVariantSchema>;

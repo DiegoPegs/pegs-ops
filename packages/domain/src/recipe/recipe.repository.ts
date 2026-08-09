@@ -35,4 +35,15 @@ export interface RecipeVersionRepository {
   findById(id: string): Promise<RecipeVersion | null>;
   listByRecipe(recipeId: string, filter?: ListRecipeVersionsFilter): Promise<RecipeVersion[]>;
   archive(id: string): Promise<RecipeVersion | null>;
+  /**
+   * Configuração de fabricação vigente da Variante: a versão padrão da receita
+   * ativa mais antiga. Resolver qual receita vale é responsabilidade deste
+   * módulo — quem consome (Eventos, adiante Produção) apenas pergunta.
+   */
+  findCurrentByVariant(variantId: string): Promise<RecipeVersionWithRecipe | null>;
+}
+
+/** Versão com o nome da receita a que pertence, para exibição em outros módulos. */
+export interface RecipeVersionWithRecipe extends RecipeVersion {
+  recipe: Pick<Recipe, 'id' | 'name'>;
 }

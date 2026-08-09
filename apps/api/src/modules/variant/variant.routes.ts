@@ -2,6 +2,7 @@ import {
   createVariantSchema,
   listVariantsQuerySchema,
   productIdPathParamsSchema,
+  searchVariantsQuerySchema,
   updateVariantSchema,
   variantIdParamsSchema,
 } from '@pegs-ops/shared';
@@ -12,6 +13,7 @@ import { PrismaVariantRepository } from './variant.repository.js';
 import { archiveVariant } from './use-cases/archive-variant.js';
 import { createVariant } from './use-cases/create-variant.js';
 import { getVariant } from './use-cases/get-variant.js';
+import { searchVariants } from './use-cases/search-variants.js';
 import { listVariants } from './use-cases/list-variants.js';
 import { updateVariant } from './use-cases/update-variant.js';
 
@@ -32,6 +34,12 @@ export const variantRoutes: FastifyPluginAsync = async (app) => {
     const { includeArchived } = listVariantsQuerySchema.parse(request.query);
 
     return listVariants(variantRepository, productRepository, productId, { includeArchived });
+  });
+
+  app.get('/variants', async (request) => {
+    const { search } = searchVariantsQuerySchema.parse(request.query);
+
+    return searchVariants(variantRepository, search);
   });
 
   // A Variante é navegável: a tela dedicada carrega a variante por id.
