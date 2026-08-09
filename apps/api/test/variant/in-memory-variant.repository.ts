@@ -6,6 +6,7 @@ import type {
   UpdateVariantData,
   VariantRepository,
   VariantWithAttributes,
+  VariantWithProduct,
 } from '@pegs-ops/domain';
 
 /** Dublê do VariantRepository para testar os use cases sem banco. */
@@ -84,5 +85,19 @@ export class InMemoryVariantRepository implements VariantRepository {
     this.items[index] = archived;
 
     return archived;
+  }
+
+  async search(term: string, limit = 20): Promise<VariantWithProduct[]> {
+    const alvo = term.trim().toLowerCase();
+
+    return this.items
+      .filter((item) => item.archivedAt === null)
+      .filter(
+        (item) =>
+          item.sku?.toLowerCase().includes(alvo) ||
+          item.attributes.some((attribute) => attribute.value.toLowerCase().includes(alvo)),
+      )
+      .slice(0, limit)
+      .map((item) => ({ ...item, product: { id: item.productId, name: 'Produto' } }));
   }
 }

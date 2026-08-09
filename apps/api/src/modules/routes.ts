@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 
+import { eventRoutes } from './event/event.routes.js';
 import { healthRoutes } from './health/health.routes.js';
 import { inventoryRoutes } from './inventory/inventory.routes.js';
 import { originRoutes } from './origin/origin.routes.js';
@@ -18,4 +19,5 @@ export const routes: FastifyPluginAsync = async (app) => {
   await app.register(variantRoutes);
   await app.register(recipeRoutes);
   await app.register(inventoryRoutes);
+  await app.register(eventRoutes);
 };

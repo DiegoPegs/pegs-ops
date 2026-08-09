@@ -32,6 +32,11 @@ export interface VariantWithAttributes extends Variant {
   attributes: VariantAttribute[];
 }
 
+/** Variante com o produto a que pertence, para busca e listagens transversais. */
+export interface VariantWithProduct extends VariantWithAttributes {
+  product: { id: string; name: string };
+}
+
 /** Atributo como chega nos comandos de escrita, antes de ter id. */
 export interface VariantAttributeData {
   name: string;

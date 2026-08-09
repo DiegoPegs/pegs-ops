@@ -5,6 +5,7 @@ import type {
   UpdateVariantData,
   VariantRepository,
   VariantWithAttributes,
+  VariantWithProduct,
 } from '@pegs-ops/domain';
 
 /** As leituras sempre trazem os atributos junto da variante. */
@@ -64,6 +65,28 @@ export class PrismaVariantRepository implements VariantRepository {
       },
       orderBy: { createdAt: 'asc' },
       include: withAttributes,
+    });
+  }
+
+  /** Busca por nome do produto, valor de atributo ou SKU, ignorando arquivadas. */
+  async search(term: string, limit = 20): Promise<VariantWithProduct[]> {
+    const contains = { contains: term, mode: 'insensitive' } as const;
+
+    return prisma.variant.findMany({
+      where: {
+        archivedAt: null,
+        OR: [
+          { sku: contains },
+          { product: { name: contains } },
+          { attributes: { some: { value: contains } } },
+        ],
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: {
+        ...withAttributes,
+        product: { select: { id: true, name: true } },
+      },
     });
   }
 

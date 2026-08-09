@@ -1,4 +1,7 @@
 import {
+  EventAlreadyArchivedError,
+  EventItemNotFoundError,
+  EventNotFoundError,
   InvalidMovementQuantityError,
   ProductAlreadyArchivedError,
   ProductNotFoundError,
@@ -8,6 +11,7 @@ import {
   RecipeVersionAlreadyArchivedError,
   RecipeVersionNotFoundError,
   VariantAlreadyArchivedError,
+  VariantAlreadyPlannedError,
   VariantNotFoundError,
 } from '@pegs-ops/domain';
 import type { FastifyInstance } from 'fastify';
@@ -20,10 +24,15 @@ const NOT_FOUND_ERRORS = [
   RecipeNotFoundError,
   RecipeVersionNotFoundError,
   StockMovementTypeNotFoundError,
+  EventNotFoundError,
+  EventItemNotFoundError,
 ] as const;
 
 /** Erros de domínio que representam entrada inválida do usuário. */
 const BAD_REQUEST_ERRORS = [InvalidMovementQuantityError] as const;
+
+/** Erros de domínio que representam conflito com o estado atual. */
+const CONFLICT_ERRORS = [VariantAlreadyPlannedError] as const;
 
 /** Erros de domínio "já arquivado". */
 const ALREADY_ARCHIVED_ERRORS = [
@@ -31,6 +40,7 @@ const ALREADY_ARCHIVED_ERRORS = [
   VariantAlreadyArchivedError,
   RecipeAlreadyArchivedError,
   RecipeVersionAlreadyArchivedError,
+  EventAlreadyArchivedError,
 ] as const;
 
 interface DomainError {
@@ -74,6 +84,12 @@ export function registerErrorHandler(app: FastifyInstance): void {
       const domainError = error as unknown as DomainError;
 
       return reply.code(404).send({ error: domainError.code, message: domainError.message });
+    }
+
+    if (matches(error, CONFLICT_ERRORS)) {
+      const domainError = error as unknown as DomainError;
+
+      return reply.code(409).send({ error: domainError.code, message: domainError.message });
     }
 
     if (matches(error, ALREADY_ARCHIVED_ERRORS)) {

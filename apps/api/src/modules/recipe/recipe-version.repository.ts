@@ -4,6 +4,7 @@ import type {
   ListRecipeVersionsFilter,
   RecipeVersion,
   RecipeVersionRepository,
+  RecipeVersionWithRecipe,
   UpdateRecipeVersionData,
 } from '@pegs-ops/domain';
 
@@ -106,6 +107,25 @@ export class PrismaRecipeVersionRepository implements RecipeVersionRepository {
     });
 
     return rows.map(toDomain);
+  }
+
+  /**
+   * Configuração de fabricação vigente da Variante: a versão padrão da receita
+   * ativa mais antiga. Quem consome — Eventos hoje, Produção adiante — não
+   * escolhe receita; a regra vive aqui.
+   */
+  async findCurrentByVariant(variantId: string): Promise<RecipeVersionWithRecipe | null> {
+    const row = await prisma.recipeVersion.findFirst({
+      where: {
+        isDefault: true,
+        archivedAt: null,
+        recipe: { variantId, archivedAt: null },
+      },
+      orderBy: { recipe: { createdAt: 'asc' } },
+      include: { recipe: { select: { id: true, name: true } } },
+    });
+
+    return row ? { ...toDomain(row), recipe: row.recipe } : null;
   }
 
   async archive(id: string): Promise<RecipeVersion | null> {
