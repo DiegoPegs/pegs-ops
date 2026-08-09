@@ -6,6 +6,7 @@ export * from './inventory/inventory.errors.js';
 export * from './inventory/inventory.repository.js';
 export * from './inventory/stock-movement.entity.js';
 export * from './inventory/stock-movement.rules.js';
+export * from './operations/work-center.js';
 export * from './origin/origin.entity.js';
 export * from './origin/origin.repository.js';
 export * from './product/product.entity.js';
