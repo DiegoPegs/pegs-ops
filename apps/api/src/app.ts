@@ -4,6 +4,7 @@ import Fastify, { type FastifyInstance } from 'fastify';
 
 import { env } from './config/env.js';
 import { routes } from './modules/routes.js';
+import { registerErrorHandler } from './plugins/error-handler.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -12,6 +13,9 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   await app.register(sensible);
   await app.register(cors, { origin: env.WEB_ORIGIN });
+
+  registerErrorHandler(app);
+
   await app.register(routes);
 
   return app;
