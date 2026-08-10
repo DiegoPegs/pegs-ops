@@ -35,6 +35,25 @@ export const updateEventItemSchema = z.object({
     .positive('A meta deve ser maior que zero.'),
 });
 
+/** Encerramento: uma linha por item do evento. */
+export const closeEventSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        itemId: z.uuid('Identificador de item inválido.'),
+        takenQuantity: z
+          .number('Informe a quantidade levada.')
+          .int('A quantidade deve ser um número inteiro.')
+          .nonnegative('A quantidade levada não pode ser negativa.'),
+        returnedQuantity: z
+          .number('Informe a quantidade retornada.')
+          .int('A quantidade deve ser um número inteiro.')
+          .nonnegative('A quantidade retornada não pode ser negativa.'),
+      }),
+    )
+    .default([]),
+});
+
 export const listEventsQuerySchema = z.object({
   includeArchived: z
     .union([z.boolean(), z.enum(['true', 'false'])])
@@ -105,6 +124,7 @@ export type EventFormValues = z.input<typeof createEventSchema>;
 export type CreateEventInput = z.output<typeof createEventSchema>;
 export type UpdateEventInput = z.output<typeof updateEventSchema>;
 export type CreateEventItemInput = z.output<typeof createEventItemSchema>;
+export type CloseEventInput = z.output<typeof closeEventSchema>;
 export type UpdateEventItemInput = z.output<typeof updateEventItemSchema>;
 export type EventDto = z.infer<typeof eventSchema>;
 export type EventStatusDto = z.infer<typeof eventStatusSchema>;

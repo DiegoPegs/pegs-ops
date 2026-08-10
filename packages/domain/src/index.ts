@@ -1,3 +1,4 @@
+export * from './event/event.closing.js';
 export * from './event/event.entity.js';
 export * from './event/event.errors.js';
 export * from './event/event.planning.js';

@@ -2,6 +2,8 @@ import {
   EventAlreadyArchivedError,
   EventItemNotFoundError,
   EventNotFoundError,
+  EventNotPlannedError,
+  InvalidEventClosingQuantityError,
   InvalidMovementQuantityError,
   ManualActivityAlreadyArchivedError,
   ManualActivityAlreadyCompletedError,
@@ -34,13 +36,17 @@ const NOT_FOUND_ERRORS = [
 ] as const;
 
 /** Erros de domínio que representam entrada inválida do usuário. */
-const BAD_REQUEST_ERRORS = [InvalidMovementQuantityError] as const;
+const BAD_REQUEST_ERRORS = [
+  InvalidMovementQuantityError,
+  InvalidEventClosingQuantityError,
+] as const;
 
 /** Erros de domínio que representam conflito com o estado atual. */
 const CONFLICT_ERRORS = [
   VariantAlreadyPlannedError,
   ManualActivityAlreadyCompletedError,
   ManualActivityNotCompletedError,
+  EventNotPlannedError,
 ] as const;
 
 /** Erros de domínio "já arquivado". */

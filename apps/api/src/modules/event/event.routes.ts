@@ -1,4 +1,5 @@
 import {
+  closeEventSchema,
   createEventItemSchema,
   createEventSchema,
   eventIdParamsSchema,
@@ -9,6 +10,7 @@ import {
 } from '@pegs-ops/shared';
 import type { FastifyPluginAsync } from 'fastify';
 
+import { PrismaStockMovementTypeRepository } from '../inventory/stock-movement-type.repository.js';
 import { PrismaStockMovementRepository } from '../inventory/stock-movement.repository.js';
 import { PrismaProductRepository } from '../product/product.repository.js';
 import { PrismaRecipeVersionRepository } from '../recipe/recipe-version.repository.js';
@@ -17,6 +19,7 @@ import { PrismaEventItemRepository } from './event-item.repository.js';
 import { PrismaEventRepository } from './event.repository.js';
 import { addEventItem } from './use-cases/add-event-item.js';
 import { archiveEvent } from './use-cases/archive-event.js';
+import { closeEvent } from './use-cases/close-event.js';
 import { createEvent } from './use-cases/create-event.js';
 import { getEvent } from './use-cases/get-event.js';
 import { getEventPlanning } from './use-cases/get-event-planning.js';
@@ -31,6 +34,7 @@ export const eventRoutes: FastifyPluginAsync = async (app) => {
   const variants = new PrismaVariantRepository();
   const products = new PrismaProductRepository();
   const movements = new PrismaStockMovementRepository();
+  const movementTypes = new PrismaStockMovementTypeRepository();
   const versions = new PrismaRecipeVersionRepository();
 
   app.post('/events', async (request, reply) => {
@@ -67,6 +71,14 @@ export const eventRoutes: FastifyPluginAsync = async (app) => {
     await archiveEvent(events, id);
 
     return reply.code(204).send();
+  });
+
+  /** Encerramento tem endpoint próprio: não é uma alteração genérica de status. */
+  app.post('/events/:id/close', async (request) => {
+    const { id } = eventIdParamsSchema.parse(request.params);
+    const { items: closings } = closeEventSchema.parse(request.body);
+
+    return closeEvent({ events, items, movements, movementTypes }, id, closings);
   });
 
   app.post('/events/:eventId/items', async (request, reply) => {
