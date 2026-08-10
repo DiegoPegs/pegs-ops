@@ -1,6 +1,8 @@
 import {
   buildActivityBoard,
   buildWorkCenter,
+  PRODUCTION_MOVEMENT_CODE,
+  type CompletedTodayItem,
   type EventItemRepository,
   type EventRepository,
   type ManualActivityRepository,
@@ -85,10 +87,43 @@ export async function getWorkCenter(
 
   // Atividades arquivadas nunca entram; as concluídas em dias anteriores saem.
   const board = buildActivityBoard(await activities.list(), today);
+  const completedProductions = await listProductionsOfDay({ movements, variants, products }, today);
 
   return buildWorkCenter(
     inputs.filter((input): input is VariantDemandInput => input !== null),
     board,
+    completedProductions,
     today,
+  );
+}
+
+/**
+ * Produções registradas hoje. Produção não é entidade: são as movimentações do
+ * tipo PRODUCTION criadas dentro do dia local do operador.
+ */
+async function listProductionsOfDay(
+  { movements, variants, products }: Pick<Dependencies, 'movements' | 'variants' | 'products'>,
+  today: Date,
+): Promise<CompletedTodayItem[]> {
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+
+  const produced = await movements.listByTypeCodeBetween(PRODUCTION_MOVEMENT_CODE, start, end);
+
+  return Promise.all(
+    produced.map(async (movement) => {
+      const variant = await variants.findById(movement.variantId);
+      const product = variant ? await products.findById(variant.productId) : null;
+      const attributes = variant?.attributes.map((attribute) => attribute.value).join(' ') ?? '';
+
+      return {
+        id: movement.id,
+        kind: 'PRODUCTION' as const,
+        title: [product?.name, attributes].filter(Boolean).join(' ') || 'Produção',
+        completedAt: movement.createdAt,
+        quantity: movement.quantity,
+      };
+    }),
   );
 }

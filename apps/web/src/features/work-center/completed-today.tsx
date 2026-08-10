@@ -9,6 +9,7 @@ import { useReopenActivity } from '@/features/manual-activities/api';
 
 const KIND_LABEL: Record<CompletedTodayItemDto['kind'], string> = {
   MANUAL_ACTIVITY: 'Atividade',
+  PRODUCTION: 'Produção',
 };
 
 function formatTime(completedAt: string): string {
@@ -49,7 +50,12 @@ export function CompletedToday({ items = [] }: { items?: CompletedTodayItemDto[]
                   <li key={item.id} className="flex items-center justify-between gap-3 py-2">
                     <span>
                       <span className="text-muted-foreground">{formatTime(item.completedAt)}</span>{' '}
-                      <span className="line-through">{item.title}</span>{' '}
+                      <span className={item.kind === 'PRODUCTION' ? '' : 'line-through'}>
+                        {item.title}
+                      </span>{' '}
+                      {item.quantity !== null && (
+                        <span className="font-medium">· {item.quantity} un </span>
+                      )}
                       <span className="text-muted-foreground text-xs">
                         ({KIND_LABEL[item.kind]})
                       </span>

@@ -27,6 +27,15 @@ export const createStockMovementSchema = z.object({
   notes: optionalText(2000),
 });
 
+/** Registro rápido de produção: só a quantidade, sempre positiva. */
+export const registerProductionSchema = z.object({
+  variantId: z.uuid('Identificador de variante inválido.'),
+  quantity: z
+    .number('Informe a quantidade produzida.')
+    .int('A quantidade deve ser um número inteiro.')
+    .positive('Informe uma quantidade maior que zero.'),
+});
+
 export const variantIdStockParamsSchema = z.object({
   variantId: z.uuid('Identificador de variante inválido.'),
 });
@@ -56,6 +65,7 @@ export const stockBalanceSchema = z.object({
 
 export type StockMovementFormValues = z.input<typeof createStockMovementSchema>;
 export type CreateStockMovementInput = z.output<typeof createStockMovementSchema>;
+export type RegisterProductionInput = z.output<typeof registerProductionSchema>;
 export type StockMovementDto = z.infer<typeof stockMovementSchema>;
 export type StockMovementTypeDto = z.infer<typeof stockMovementTypeSchema>;
 export type StockBalanceDto = z.infer<typeof stockBalanceSchema>;

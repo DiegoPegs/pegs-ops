@@ -9,4 +9,8 @@ export class PrismaStockMovementTypeRepository implements StockMovementTypeRepos
   async findById(id: string): Promise<StockMovementType | null> {
     return prisma.stockMovementType.findUnique({ where: { id } });
   }
+
+  async findByCode(code: string): Promise<StockMovementType | null> {
+    return prisma.stockMovementType.findUnique({ where: { code } });
+  }
 }
