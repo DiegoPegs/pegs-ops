@@ -1,3 +1,5 @@
+import type { ManualActivity } from '../manual-activity/manual-activity.entity.js';
+import type { ActivityBoard } from '../manual-activity/manual-activity.rules.js';
 import type { VariantAttribute } from '../variant/variant.entity.js';
 
 /**
@@ -72,9 +74,37 @@ export interface WorkCenterInsights {
   variantsWithoutSetup: number;
 }
 
+/**
+ * Item de "Concluídas Hoje". A seção é global da Central: hoje recebe atividades
+ * manuais e, adiante, produções e outras ações concluídas no dia.
+ */
+export interface CompletedTodayItem {
+  id: string;
+  kind: 'MANUAL_ACTIVITY';
+  title: string;
+  completedAt: Date;
+}
+
 export interface WorkCenter {
   pendingProductions: PendingProduction[];
+  /** Atividades manuais pendentes, já ordenadas. */
+  activities: ManualActivity[];
+  completedToday: CompletedTodayItem[];
   insights: WorkCenterInsights;
+}
+
+/** Traduz atividades concluídas para o item genérico da seção global. */
+export function toCompletedTodayItems(activities: ManualActivity[]): CompletedTodayItem[] {
+  return activities
+    .filter((activity): activity is ManualActivity & { completedAt: Date } =>
+      Boolean(activity.completedAt),
+    )
+    .map((activity) => ({
+      id: activity.id,
+      kind: 'MANUAL_ACTIVITY' as const,
+      title: activity.title,
+      completedAt: activity.completedAt,
+    }));
 }
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -225,7 +255,11 @@ export function buildInsights(
 }
 
 /** Monta a Central inteira. Nada aqui é persistido: tudo é consulta. */
-export function buildWorkCenter(inputs: VariantDemandInput[], today: Date): WorkCenter {
+export function buildWorkCenter(
+  inputs: VariantDemandInput[],
+  board: ActivityBoard,
+  today: Date,
+): WorkCenter {
   const pendingProductions = sortByUrgency(
     inputs
       .map((input) => buildPendingProduction(input, today))
@@ -234,6 +268,8 @@ export function buildWorkCenter(inputs: VariantDemandInput[], today: Date): Work
 
   return {
     pendingProductions,
+    activities: board.toDo,
+    completedToday: toCompletedTodayItems(board.completedToday),
     insights: buildInsights(pendingProductions, inputs, today),
   };
 }

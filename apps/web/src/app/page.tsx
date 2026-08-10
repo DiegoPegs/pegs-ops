@@ -41,11 +41,11 @@ export default function WorkCenterPage() {
         errorMessage={isError ? error.message : null}
       />
 
-      <ManualActivities />
+      <ManualActivities activities={data?.activities} />
 
       {data && <Insights insights={data.insights} />}
 
-      <CompletedToday />
+      <CompletedToday items={data?.completedToday} />
     </main>
   );
 }

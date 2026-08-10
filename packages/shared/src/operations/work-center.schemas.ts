@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { manualActivitySchema } from '../manual-activity/manual-activity.schemas.js';
+
 export const productionPrioritySchema = z.enum(['OVERDUE', 'TODAY', 'URGENT', 'SOON', 'PLANNED']);
 
 export const pendingProductionOriginSchema = z.object({
@@ -41,8 +43,22 @@ export const workCenterInsightsSchema = z.object({
   variantsWithoutSetup: z.number(),
 });
 
+/**
+ * Item de "Concluídas Hoje". A seção é global da Central: hoje recebe atividades
+ * manuais e, adiante, produções e outras ações concluídas no dia.
+ */
+export const completedTodayItemSchema = z.object({
+  id: z.string(),
+  kind: z.enum(['MANUAL_ACTIVITY']),
+  title: z.string(),
+  completedAt: z.string(),
+});
+
 export const workCenterSchema = z.object({
   pendingProductions: z.array(pendingProductionSchema),
+  /** Atividades manuais pendentes, já ordenadas. */
+  activities: z.array(manualActivitySchema),
+  completedToday: z.array(completedTodayItemSchema),
   insights: workCenterInsightsSchema,
 });
 
@@ -50,17 +66,4 @@ export type ProductionPriorityDto = z.infer<typeof productionPrioritySchema>;
 export type PendingProductionDto = z.infer<typeof pendingProductionSchema>;
 export type PendingProductionOriginDto = z.infer<typeof pendingProductionOriginSchema>;
 export type WorkCenterDto = z.infer<typeof workCenterSchema>;
-
-/**
- * Atividade manual: estrutura preparada para a próxima WO, ainda sem
- * persistência. A Central hoje apenas exibe a seção vazia.
- */
-export const manualActivitySchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  kind: z.enum(['QUOTE', 'TEST_STL', 'PURCHASE', 'REMINDER']),
-  dueDate: z.string().nullable(),
-  done: z.boolean(),
-});
-
-export type ManualActivityDto = z.infer<typeof manualActivitySchema>;
+export type CompletedTodayItemDto = z.infer<typeof completedTodayItemSchema>;

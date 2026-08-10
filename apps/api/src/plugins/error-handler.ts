@@ -3,6 +3,10 @@ import {
   EventItemNotFoundError,
   EventNotFoundError,
   InvalidMovementQuantityError,
+  ManualActivityAlreadyArchivedError,
+  ManualActivityAlreadyCompletedError,
+  ManualActivityNotCompletedError,
+  ManualActivityNotFoundError,
   ProductAlreadyArchivedError,
   ProductNotFoundError,
   StockMovementTypeNotFoundError,
@@ -26,13 +30,18 @@ const NOT_FOUND_ERRORS = [
   StockMovementTypeNotFoundError,
   EventNotFoundError,
   EventItemNotFoundError,
+  ManualActivityNotFoundError,
 ] as const;
 
 /** Erros de domínio que representam entrada inválida do usuário. */
 const BAD_REQUEST_ERRORS = [InvalidMovementQuantityError] as const;
 
 /** Erros de domínio que representam conflito com o estado atual. */
-const CONFLICT_ERRORS = [VariantAlreadyPlannedError] as const;
+const CONFLICT_ERRORS = [
+  VariantAlreadyPlannedError,
+  ManualActivityAlreadyCompletedError,
+  ManualActivityNotCompletedError,
+] as const;
 
 /** Erros de domínio "já arquivado". */
 const ALREADY_ARCHIVED_ERRORS = [
@@ -41,6 +50,7 @@ const ALREADY_ARCHIVED_ERRORS = [
   RecipeAlreadyArchivedError,
   RecipeVersionAlreadyArchivedError,
   EventAlreadyArchivedError,
+  ManualActivityAlreadyArchivedError,
 ] as const;
 
 interface DomainError {
