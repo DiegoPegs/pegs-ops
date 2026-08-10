@@ -33,3 +33,21 @@ export class VariantAlreadyPlannedError extends Error {
     this.name = 'VariantAlreadyPlannedError';
   }
 }
+
+export class EventNotPlannedError extends Error {
+  readonly code = 'EVENT_NOT_PLANNED';
+
+  constructor(readonly eventId: string) {
+    super(`Evento ${eventId} não está planejado: apenas eventos PLANNED podem ser encerrados.`);
+    this.name = 'EventNotPlannedError';
+  }
+}
+
+export class InvalidEventClosingQuantityError extends Error {
+  readonly code = 'INVALID_EVENT_CLOSING_QUANTITY';
+
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidEventClosingQuantityError';
+  }
+}

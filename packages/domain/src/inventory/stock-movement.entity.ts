@@ -13,6 +13,9 @@ export type StockMovementDirection = 'IN' | 'OUT' | 'BOTH';
  */
 export const PRODUCTION_MOVEMENT_CODE = 'PRODUCTION';
 
+/** Venda direta: usada ao encerrar um evento, refletindo a saída física. */
+export const DIRECT_SALE_MOVEMENT_CODE = 'DIRECT_SALE';
+
 export interface StockMovementType {
   id: string;
   code: string;

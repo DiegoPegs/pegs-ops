@@ -2,7 +2,7 @@
 
 import type { EventStatusDto } from '@pegs-ops/shared';
 import Link from 'next/link';
-import { use } from 'react';
+import { use, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useEvent, useUpdateEvent } from '@/features/events/api';
+import { Button } from '@/components/ui/button';
+import { CloseEventDialog } from '@/features/events/close-event-dialog';
+import { useEvent, useEventPlanning, useUpdateEvent } from '@/features/events/api';
 import { PlanningTab } from '@/features/events/planning-tab';
 
 const STATUS_LABEL: Record<EventStatusDto, string> = {
@@ -30,7 +32,9 @@ function formatEventDate(value: string): string {
 export default function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { data: event, isPending, isError, error } = useEvent(id);
+  const { data: planning } = useEventPlanning(id);
   const updateEvent = useUpdateEvent(id);
+  const [closing, setClosing] = useState(false);
 
   return (
     <main className="mx-auto max-w-5xl space-y-6 p-8">
@@ -58,21 +62,27 @@ export default function EventDetailsPage({ params }: { params: Promise<{ id: str
               </div>
             </div>
 
-            <Select
-              value={event.status}
-              onValueChange={(status) => updateEvent.mutate({ status: status as EventStatusDto })}
-            >
-              <SelectTrigger className="w-44">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(STATUS_LABEL).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              {event.status === 'PLANNED' && !event.archivedAt && (
+                <Button onClick={() => setClosing(true)}>Encerrar evento</Button>
+              )}
+
+              <Select
+                value={event.status}
+                onValueChange={(status) => updateEvent.mutate({ status: status as EventStatusDto })}
+              >
+                <SelectTrigger className="w-44">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(STATUS_LABEL).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <Tabs defaultValue="planning">
@@ -103,6 +113,15 @@ export default function EventDetailsPage({ params }: { params: Promise<{ id: str
               </Card>
             </TabsContent>
           </Tabs>
+
+          {closing && (
+            <CloseEventDialog
+              eventId={event.id}
+              eventName={event.name}
+              items={planning?.items ?? []}
+              onClose={() => setClosing(false)}
+            />
+          )}
         </>
       )}
     </main>
