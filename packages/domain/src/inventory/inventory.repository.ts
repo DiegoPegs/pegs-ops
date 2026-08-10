@@ -19,11 +19,17 @@ export interface StockMovementRepository {
   listByVariant(variantId: string): Promise<StockMovementWithType[]>;
   /** Saldo calculado: soma das quantidades da variante. Nunca é armazenado. */
   sumQuantityByVariant(variantId: string): Promise<number>;
+  /**
+   * Movimentações de um tipo dentro de um intervalo, da mais recente para a
+   * mais antiga. Usada pela Central para montar o que foi feito no dia.
+   */
+  listByTypeCodeBetween(code: string, start: Date, end: Date): Promise<StockMovementWithType[]>;
 }
 
 export interface StockMovementTypeRepository {
   list(): Promise<StockMovementType[]>;
   findById(id: string): Promise<StockMovementType | null>;
+  findByCode(code: string): Promise<StockMovementType | null>;
 }
 
 export type { StockMovement };

@@ -58,4 +58,21 @@ export class PrismaStockMovementRepository implements StockMovementRepository {
 
     return result._sum.quantity ?? 0;
   }
+
+  async listByTypeCodeBetween(
+    code: string,
+    start: Date,
+    end: Date,
+  ): Promise<StockMovementWithType[]> {
+    const rows = await prisma.stockMovement.findMany({
+      where: {
+        movementType: { code },
+        createdAt: { gte: start, lt: end },
+      },
+      orderBy: { createdAt: 'desc' },
+      include: withType,
+    });
+
+    return rows.map(toDomain);
+  }
 }

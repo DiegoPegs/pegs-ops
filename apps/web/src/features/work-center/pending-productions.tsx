@@ -2,9 +2,12 @@
 
 import type { PendingProductionDto, ProductionPriorityDto } from '@pegs-ops/shared';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { ProductionDialog } from '@/features/work-center/production-dialog';
 
 const PRIORITY_LABEL: Record<ProductionPriorityDto, string> = {
   OVERDUE: 'Atrasado',
@@ -39,7 +42,13 @@ function variantLabel(production: PendingProductionDto): string {
   return production.variantSku ?? 'Variante';
 }
 
-function ProductionCard({ production }: { production: PendingProductionDto }) {
+function ProductionCard({
+  production,
+  onRegister,
+}: {
+  production: PendingProductionDto;
+  onRegister: (production: PendingProductionDto) => void;
+}) {
   return (
     <Card className={`border-l-4 ${PRIORITY_STYLE[production.priority]}`}>
       <CardContent className="space-y-3 pt-6">
@@ -57,11 +66,16 @@ function ProductionCard({ production }: { production: PendingProductionDto }) {
             </p>
           </div>
 
-          <div className="text-right">
-            <p className="text-2xl font-semibold">{production.toProduce}</p>
-            <p className="text-muted-foreground text-xs">
-              {production.toProduce === 1 ? 'unidade' : 'unidades'}
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-2xl font-semibold">{production.toProduce}</p>
+              <p className="text-muted-foreground text-xs">
+                {production.toProduce === 1 ? 'unidade' : 'unidades'}
+              </p>
+            </div>
+            <Button size="sm" onClick={() => onRegister(production)}>
+              Registrar produção
+            </Button>
           </div>
         </div>
 
@@ -101,6 +115,8 @@ export function PendingProductions({
   isPending: boolean;
   errorMessage?: string | null;
 }) {
+  const [registering, setRegistering] = useState<PendingProductionDto | null>(null);
+
   return (
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">
@@ -118,9 +134,21 @@ export function PendingProductions({
 
       <div className="grid gap-3">
         {productions?.map((production) => (
-          <ProductionCard key={production.variantId} production={production} />
+          <ProductionCard
+            key={production.variantId}
+            production={production}
+            onRegister={setRegistering}
+          />
         ))}
       </div>
+
+      {registering && (
+        <ProductionDialog
+          key={registering.variantId}
+          production={registering}
+          onClose={() => setRegistering(null)}
+        />
+      )}
     </section>
   );
 }

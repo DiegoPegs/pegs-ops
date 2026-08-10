@@ -1,4 +1,8 @@
-import { createStockMovementSchema, variantIdStockParamsSchema } from '@pegs-ops/shared';
+import {
+  createStockMovementSchema,
+  registerProductionSchema,
+  variantIdStockParamsSchema,
+} from '@pegs-ops/shared';
 import type { FastifyPluginAsync } from 'fastify';
 
 import { PrismaVariantRepository } from '../variant/variant.repository.js';
@@ -6,6 +10,7 @@ import { PrismaStockMovementTypeRepository } from './stock-movement-type.reposit
 import { PrismaStockMovementRepository } from './stock-movement.repository.js';
 import { createStockMovement } from './use-cases/create-stock-movement.js';
 import { getCurrentStock } from './use-cases/get-current-stock.js';
+import { registerProduction } from './use-cases/register-production.js';
 import { listStockMovements } from './use-cases/list-stock-movements.js';
 
 export const inventoryRoutes: FastifyPluginAsync = async (app) => {
@@ -20,6 +25,22 @@ export const inventoryRoutes: FastifyPluginAsync = async (app) => {
   app.post('/stock-movements', async (request, reply) => {
     const input = createStockMovementSchema.parse(request.body);
     const movement = await createStockMovement(
+      movementRepository,
+      movementTypeRepository,
+      variantRepository,
+      input,
+    );
+
+    return reply.code(201).send(movement);
+  });
+
+  /**
+   * Registro rápido de produção: o operador informa só a quantidade e o
+   * sistema cria a movimentação do tipo PRODUCTION.
+   */
+  app.post('/productions', async (request, reply) => {
+    const input = registerProductionSchema.parse(request.body);
+    const movement = await registerProduction(
       movementRepository,
       movementTypeRepository,
       variantRepository,

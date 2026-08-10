@@ -80,9 +80,11 @@ export interface WorkCenterInsights {
  */
 export interface CompletedTodayItem {
   id: string;
-  kind: 'MANUAL_ACTIVITY';
+  kind: 'MANUAL_ACTIVITY' | 'PRODUCTION';
   title: string;
   completedAt: Date;
+  /** Preenchido nas produções: quantas unidades entraram no estoque. */
+  quantity: number | null;
 }
 
 export interface WorkCenter {
@@ -104,6 +106,7 @@ export function toCompletedTodayItems(activities: ManualActivity[]): CompletedTo
       kind: 'MANUAL_ACTIVITY' as const,
       title: activity.title,
       completedAt: activity.completedAt,
+      quantity: null,
     }));
 }
 
@@ -258,6 +261,7 @@ export function buildInsights(
 export function buildWorkCenter(
   inputs: VariantDemandInput[],
   board: ActivityBoard,
+  completedProductions: CompletedTodayItem[],
   today: Date,
 ): WorkCenter {
   const pendingProductions = sortByUrgency(
@@ -269,7 +273,12 @@ export function buildWorkCenter(
   return {
     pendingProductions,
     activities: board.toDo,
-    completedToday: toCompletedTodayItems(board.completedToday),
+    // As duas seções respondem perguntas diferentes: uma mostra o que falta,
+    // a outra o que já foi feito hoje. Produção parcial aparece aqui do mesmo
+    // jeito, mesmo com o card ainda pendente.
+    completedToday: [...toCompletedTodayItems(board.completedToday), ...completedProductions].sort(
+      (a, b) => b.completedAt.getTime() - a.completedAt.getTime(),
+    ),
     insights: buildInsights(pendingProductions, inputs, today),
   };
 }

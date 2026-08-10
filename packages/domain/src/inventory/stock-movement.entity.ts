@@ -7,6 +7,12 @@
  */
 export type StockMovementDirection = 'IN' | 'OUT' | 'BOTH';
 
+/**
+ * Produzir é registrar uma movimentação deste tipo — não existe tabela de
+ * Produção. O código vem do seed e é o único aceito no registro rápido.
+ */
+export const PRODUCTION_MOVEMENT_CODE = 'PRODUCTION';
+
 export interface StockMovementType {
   id: string;
   code: string;

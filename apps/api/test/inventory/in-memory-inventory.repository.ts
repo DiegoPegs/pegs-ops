@@ -31,6 +31,10 @@ export class InMemoryStockMovementTypeRepository implements StockMovementTypeRep
   async findById(id: string): Promise<StockMovementType | null> {
     return MOVEMENT_TYPES.find((item) => item.id === id) ?? null;
   }
+
+  async findByCode(code: string): Promise<StockMovementType | null> {
+    return MOVEMENT_TYPES.find((item) => item.code === code) ?? null;
+  }
 }
 
 export class InMemoryStockMovementRepository implements StockMovementRepository {
@@ -59,6 +63,17 @@ export class InMemoryStockMovementRepository implements StockMovementRepository 
   async listByVariant(variantId: string): Promise<StockMovementWithType[]> {
     return this.items
       .filter((item) => item.variantId === variantId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async listByTypeCodeBetween(
+    code: string,
+    start: Date,
+    end: Date,
+  ): Promise<StockMovementWithType[]> {
+    return this.items
+      .filter((item) => item.movementType.code === code)
+      .filter((item) => item.createdAt >= start && item.createdAt < end)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 

@@ -49,9 +49,11 @@ export const workCenterInsightsSchema = z.object({
  */
 export const completedTodayItemSchema = z.object({
   id: z.string(),
-  kind: z.enum(['MANUAL_ACTIVITY']),
+  kind: z.enum(['MANUAL_ACTIVITY', 'PRODUCTION']),
   title: z.string(),
   completedAt: z.string(),
+  /** Preenchido nas produções: quantas unidades entraram no estoque. */
+  quantity: z.number().nullable(),
 });
 
 export const workCenterSchema = z.object({
