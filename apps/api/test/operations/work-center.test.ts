@@ -6,9 +6,13 @@ import {
   sortByUrgency,
   type PendingProduction,
   type ProductionDemand,
+  type ActivityBoard,
   type VariantDemandInput,
 } from '@pegs-ops/domain';
 import { describe, expect, it } from 'vitest';
+
+/** A Central desta suíte só exercita produções; atividades têm suíte própria. */
+const SEM_ATIVIDADES: ActivityBoard = { toDo: [], completedToday: [] };
 
 const HOJE = new Date('2026-08-10T09:00:00Z');
 
@@ -147,6 +151,7 @@ describe('buildWorkCenter', () => {
           ],
         }),
       ],
+      SEM_ATIVIDADES,
       HOJE,
     );
 
@@ -169,6 +174,7 @@ describe('buildWorkCenter', () => {
           ],
         }),
       ],
+      SEM_ATIVIDADES,
       HOJE,
     );
 
@@ -179,6 +185,7 @@ describe('buildWorkCenter', () => {
   it('não cria card quando o estoque já cobre a demanda', () => {
     const { pendingProductions } = buildWorkCenter(
       [variante({ currentStock: 50, demands: [demanda({ targetQuantity: 10 })] })],
+      SEM_ATIVIDADES,
       HOJE,
     );
 
@@ -194,6 +201,7 @@ describe('buildWorkCenter', () => {
           material: null,
         }),
       ],
+      SEM_ATIVIDADES,
       HOJE,
     );
 
@@ -256,6 +264,7 @@ describe('insights', () => {
           demands: [demanda({ eventId: 'e3', targetQuantity: 4 })],
         }),
       ],
+      SEM_ATIVIDADES,
       HOJE,
     );
 
@@ -284,6 +293,7 @@ describe('insights', () => {
           ],
         }),
       ],
+      SEM_ATIVIDADES,
       HOJE,
     );
 
@@ -291,7 +301,7 @@ describe('insights', () => {
   });
 
   it('não expõe custo, margem ou preço', () => {
-    const { insights, pendingProductions } = buildWorkCenter([variante()], HOJE);
+    const { insights, pendingProductions } = buildWorkCenter([variante()], SEM_ATIVIDADES, HOJE);
 
     const serialized = JSON.stringify({ insights, pendingProductions });
 

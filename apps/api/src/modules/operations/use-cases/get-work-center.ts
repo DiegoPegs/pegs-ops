@@ -1,7 +1,9 @@
 import {
+  buildActivityBoard,
   buildWorkCenter,
   type EventItemRepository,
   type EventRepository,
+  type ManualActivityRepository,
   type ProductRepository,
   type ProductionDemand,
   type RecipeVersionRepository,
@@ -18,6 +20,7 @@ interface Dependencies {
   products: ProductRepository;
   movements: StockMovementRepository;
   versions: RecipeVersionRepository;
+  activities: ManualActivityRepository;
 }
 
 /**
@@ -28,7 +31,7 @@ interface Dependencies {
  * ou cancelado não pede produção.
  */
 export async function getWorkCenter(
-  { events, items, variants, products, movements, versions }: Dependencies,
+  { events, items, variants, products, movements, versions, activities }: Dependencies,
   today: Date = new Date(),
 ): Promise<WorkCenter> {
   const activeEvents = (await events.list()).filter((event) => event.status === 'PLANNED');
@@ -80,8 +83,12 @@ export async function getWorkCenter(
     ),
   );
 
+  // Atividades arquivadas nunca entram; as concluídas em dias anteriores saem.
+  const board = buildActivityBoard(await activities.list(), today);
+
   return buildWorkCenter(
     inputs.filter((input): input is VariantDemandInput => input !== null),
+    board,
     today,
   );
 }

@@ -199,3 +199,29 @@ model EventItem {
   @@index([variantId])
   @@map("event_items")
 }
+
+/// Prioridade de uma atividade manual. Conjunto fixo, não configurável.
+enum ActivityPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+/// Atividade manual: trabalho criado pelo usuário e exibido na Central.
+/// Independente: sem origem, categoria, recorrência ou vínculo com módulos.
+model ManualActivity {
+  id          String           @id @default(uuid()) @db.Uuid
+  title       String           @db.VarChar(200)
+  description String?
+  priority    ActivityPriority @default(MEDIUM)
+  dueDate     DateTime?        @map("due_date")
+  completedAt DateTime?        @map("completed_at")
+  archivedAt  DateTime?        @map("archived_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  @@index([archivedAt])
+  @@index([completedAt])
+  @@index([dueDate])
+  @@map("manual_activities")
+}
